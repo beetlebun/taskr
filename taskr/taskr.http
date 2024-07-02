@@ -1,0 +1,6 @@
+@taskr_HostAddress = http://localhost:5032
+
+GET {{taskr_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
