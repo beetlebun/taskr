@@ -1,5 +1,5 @@
 import { jwtDecode } from "jwt-decode";
-import { handleError } from "@/utils/error_handler";
+import { renderMessage } from "@/utils/response_handler";
 import type { UserProfileToken } from "../models/User";
 import axios from "axios";
 import { url } from "./api";
@@ -11,10 +11,8 @@ export const login = async (username: string, password: string) =>
       username,
       password,
     })
-    .then((response) => {
-      sessionStorage.setItem("token", response.data.token);
-    })
-    .catch((error) => handleError(error));
+    .then((response) => (sessionStorage.setItem("token", response.data.token)))
+    .catch((error) => renderMessage(error));
 
 export const logout = async () => sessionStorage.removeItem("token");
 

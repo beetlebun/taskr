@@ -13,7 +13,6 @@ import App from './App.vue'
 // Composables
 import { createApp } from 'vue'
 import Vue3Toastify, { type ToastContainerOptions } from 'vue3-toastify'
-// import axios from "axios";
 
 const app = createApp(App)
 

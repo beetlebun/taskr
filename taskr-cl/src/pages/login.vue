@@ -3,33 +3,35 @@
     <v-card class="mx-auto px-6 py-8 my-15" max-width="344">
       <v-form v-model="state.form" @submit.prevent="login">
         <v-text-field
+          variant="outlined"
+          density="compact"
+          prepend-inner-icon="mdi-shield-account"
           v-model="state.username"
           :readonly="state.loading"
           :rules="[state.rules.required]"
-          class="mb-2"
+          class="mb-4"
           label="Nome de usuário"
           clearable
         ></v-text-field>
 
         <v-text-field
+          variant="outlined"
+          density="compact"
+          prepend-inner-icon="mdi-lock-outline"
           v-model="state.password"
-          :append-icon="state.show_icon ? 'mdi-eye' : 'mdi-eye-off'"
+          :append-inner-icon="state.show_icon ? 'mdi-eye' : 'mdi-eye-off'"
           :type="state.show_icon ? 'text' : 'password'"
           :readonly="state.loading"
           :rules="[state.rules.required]"
-          @click:append="state.show_icon = !state.show_icon"
+          @click:append-inner="state.show_icon = !state.show_icon"
           label="Senha"
           placeholder="Digite sua senha"
-          clearable
         ></v-text-field>
-
-        <br />
 
         <v-btn
           :disabled="!state.form"
           :loading="state.loading"
-          class="submit-button"
-          size="large"
+          class="submit-button mt-4"
           type="submit"
           variant="elevated"
           block
@@ -39,7 +41,7 @@
       </v-form>
     </v-card>
   </v-sheet>
-  <p class="footer-text">® taskr | beetlebun</p>
+  <Footer />
 </template>
 
 <script setup lang="ts">
@@ -68,8 +70,8 @@ const login = () => {
   state.loading = true;
 
   return login_service(state.username, state.password)
-    .then(() => router.replace({ path: "/home" }))
-    .then(() => (state.loading = false));
+    .then(() => (state.loading = false))
+    .then(() => router.replace({ path: "/home" }));
 };
 </script>
 
@@ -78,13 +80,18 @@ const login = () => {
   height: 95vh;
 }
 
-.footer-text {
-  text-align: center;
-  margin-top: 0.6%;
-}
-
 .submit-button {
   color: lightgrey;
-  background-color: rgba(54, 67, 77, 0.644);
+  background-color: rgb(49 59 66 / 55%);
 }
+
+/* brigando com o vuetify */
+.v-sheet {
+  background-image: url("https://picsum.photos/1920/1080?random=1") !important;
+}
+
+.v-messages__message {
+  font-size: 10.5px !important;
+}
+/* --- */
 </style>

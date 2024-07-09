@@ -31,7 +31,10 @@ const router = createRouter({
 router.beforeEach((to: any, from: any, next: any) => {
   if (to.name !== "/login" && !is_logged_in()) {
     next({ path: "/login", replace: true });
-  } else if (to.name === "/login" && is_logged_in()) {
+  } else if (
+    (to.name === "/login" || to.name === "/" || to.name === undefined) &&
+    is_logged_in()
+  ) {
     next({ path: "/home", replace: true });
   } else {
     next();
