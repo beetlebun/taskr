@@ -11,7 +11,6 @@ using taskr.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 var Configuration = builder.Configuration;
 builder.Services.AddDbContext<ApplicationDBContext>(options =>
@@ -29,7 +28,7 @@ builder.Services.AddSwaggerGen(option =>
     option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,
-        Description = "Please enter a valid token",
+        Description = "Por favor, insira um token válido",
         Name = "Authorization",
         Type = SecuritySchemeType.Http,
         BearerFormat = "JWT",
@@ -82,6 +81,8 @@ builder.Services.AddAuthentication(options => {
 
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 builder.Services.AddScoped<ITaskRepository, TaskRepository>();
+builder.Services.AddScoped<ICollaboratorRepository, CollaboratorRepository>();
+builder.Services.AddScoped<ITimeTrackerRepository, TimeTrackerRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 
 var app = builder.Build();
@@ -89,18 +90,15 @@ var app = builder.Build();
 app.UseCors(x => x
     .AllowAnyMethod()
     .AllowAnyHeader()
-    .SetIsOriginAllowed(origin => true) // allow any origin
-    // .WithOrigins("https://localhost:3000") // Allow only this origin can also have multiple origins separated with comma
-    .AllowCredentials()); // allow credentials
+    .SetIsOriginAllowed(origin => true)
+    .AllowCredentials());
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-// app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();

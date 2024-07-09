@@ -15,11 +15,19 @@ namespace taskr.Data
 
         public DbSet<Models.Project> Projects { get; set; }
         public DbSet<Models.Task> Tasks { get; set; }
+        public DbSet<Models.Collaborator> Collaborators { get; set; }
+        public DbSet<Models.TimeTracker> TimeTrackers { get; set; }
 
-        // isso serve pra seed the roles \/
+        // seed the roles
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+                builder.Entity<Collaborator>()
+                    .HasOne(c => c.User)
+                    .WithMany()
+                    .HasForeignKey(c => c.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
 
             List<IdentityRole> roles = new List<IdentityRole>
             {

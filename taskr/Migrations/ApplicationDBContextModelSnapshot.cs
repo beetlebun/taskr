@@ -50,7 +50,7 @@ namespace taskr.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "1b676cbe-faa4-413b-9853-dfccb3664157",
+                            Id = "5df0b31e-567c-4cb2-bf8f-d38786993468",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -162,6 +162,27 @@ namespace taskr.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("taskr.Models.Collaborator", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Collaborators");
+                });
+
             modelBuilder.Entity("taskr.Models.Project", b =>
                 {
                     b.Property<Guid>("Id")
@@ -199,6 +220,37 @@ namespace taskr.Migrations
                     b.HasIndex("ProjectId");
 
                     b.ToTable("Tasks");
+                });
+
+            modelBuilder.Entity("taskr.Models.TimeTracker", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CollaboratorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("TaskId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("TimeZoneId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CollaboratorId");
+
+                    b.HasIndex("TaskId");
+
+                    b.ToTable("TimeTrackers");
                 });
 
             modelBuilder.Entity("taskr.Models.User", b =>
@@ -316,6 +368,17 @@ namespace taskr.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("taskr.Models.Collaborator", b =>
+                {
+                    b.HasOne("taskr.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("taskr.Models.Task", b =>
                 {
                     b.HasOne("taskr.Models.Project", "Project")
@@ -325,6 +388,25 @@ namespace taskr.Migrations
                         .IsRequired();
 
                     b.Navigation("Project");
+                });
+
+            modelBuilder.Entity("taskr.Models.TimeTracker", b =>
+                {
+                    b.HasOne("taskr.Models.Collaborator", "Collaborator")
+                        .WithMany()
+                        .HasForeignKey("CollaboratorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("taskr.Models.Task", "Task")
+                        .WithMany()
+                        .HasForeignKey("TaskId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Collaborator");
+
+                    b.Navigation("Task");
                 });
 #pragma warning restore 612, 618
         }

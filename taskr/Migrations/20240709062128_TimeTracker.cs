@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace taskr.Migrations
 {
     /// <inheritdoc />
-    public partial class SeedRole : Migration
+    public partial class TimeTracker : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -170,6 +170,25 @@ namespace taskr.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Collaborators",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    UserId = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Collaborators", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Collaborators_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Tasks",
                 columns: table => new
                 {
@@ -189,10 +208,38 @@ namespace taskr.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "TimeTrackers",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    TimeZoneId = table.Column<string>(type: "text", nullable: false),
+                    TaskId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CollaboratorId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TimeTrackers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TimeTrackers_Collaborators_CollaboratorId",
+                        column: x => x.CollaboratorId,
+                        principalTable: "Collaborators",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TimeTrackers_Tasks_TaskId",
+                        column: x => x.TaskId,
+                        principalTable: "Tasks",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "1b676cbe-faa4-413b-9853-dfccb3664157", null, "User", "USER" });
+                values: new object[] { "5df0b31e-567c-4cb2-bf8f-d38786993468", null, "User", "USER" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -232,9 +279,24 @@ namespace taskr.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Collaborators_UserId",
+                table: "Collaborators",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Tasks_ProjectId",
                 table: "Tasks",
                 column: "ProjectId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TimeTrackers_CollaboratorId",
+                table: "TimeTrackers",
+                column: "CollaboratorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TimeTrackers_TaskId",
+                table: "TimeTrackers",
+                column: "TaskId");
         }
 
         /// <inheritdoc />
@@ -256,10 +318,16 @@ namespace taskr.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Tasks");
+                name: "TimeTrackers");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "Collaborators");
+
+            migrationBuilder.DropTable(
+                name: "Tasks");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

@@ -35,7 +35,6 @@ namespace taskr.Controllers
 
             if (project == null)
             {
-                // transfomar em objeto padrão de erro resposta
                 var errors = new Dictionary<string, List<string>>
                 {
                     { "Id", new List<string> { $"Projeto com id {{{id}}} não encontrado" } }

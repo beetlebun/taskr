@@ -8,6 +8,5 @@ namespace taskr.Models
 {
     public class User : IdentityUser
     {
-        
     }
 }

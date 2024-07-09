@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using taskr.Dtos;
 using taskr.Interfaces;
 using taskr.Mappers;
@@ -40,10 +41,11 @@ namespace taskr.Controllers
             if (task == null)
             {
                 errors.Add("Id", new List<string> { $"Tarefa com Id {{{id}}} não encontrada" });
-                return new NotFoundObjectResult( new { errors });
             }
 
-            return Ok(task.ToResponse());
+            if (!errors.IsNullOrEmpty()) return new BadRequestObjectResult( new { errors } );
+
+            return Ok(task!.ToResponse());
         }
 
         [Authorize]
@@ -67,13 +69,14 @@ namespace taskr.Controllers
             if (project == null)
             {
                 errors.Add("ProjectId", new List<string> { $"Projeto com Id {{{taskRequest.ProjectId}}} não encontrado" });
-                return new BadRequestObjectResult( new { errors } );
             }
 
             if(!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+
+            if (!errors.IsNullOrEmpty()) return new BadRequestObjectResult( new { errors } );
 
             var task = taskRequest.ToModel();
 
@@ -93,7 +96,6 @@ namespace taskr.Controllers
             if (project == null)
             {
                 errors.Add("ProjectId", new List<string> { $"Projeto com Id {{{taskRequest.ProjectId}}} não encontrado" });
-                return new BadRequestObjectResult( new { errors } );
             }
 
             if(!ModelState.IsValid)
@@ -106,10 +108,11 @@ namespace taskr.Controllers
             if (task == null)
             {
                 errors.Add("Id", new List<string> { $"Tarefa com Id {{{id}}} não encontrada" });
-                return new NotFoundObjectResult( new { errors });
             }
 
-            return Ok(task.ToResponse());
+            if (!errors.IsNullOrEmpty()) return new BadRequestObjectResult( new { errors } );
+
+            return Ok(task!.ToResponse());
         }
 
         [Authorize]
@@ -128,8 +131,9 @@ namespace taskr.Controllers
             if (task == null)
             {
                 errors.Add("Id", new List<string> { $"Tarefa com Id {{{id}}} não encontrada" });
-                return new NotFoundObjectResult( new { errors });
             }
+
+            if (!errors.IsNullOrEmpty()) return new BadRequestObjectResult( new { errors } );
 
             return NoContent();
         }
